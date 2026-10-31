@@ -1,0 +1,22 @@
+{
+  "passed": [
+    "IndexedDB persists profile and day after reload; no seeded patients",
+    "Partial daily record stays incomplete, not zero",
+    "Draft survives emergency overlay, navigation and reload",
+    "Parallel modal save preserves the daily draft",
+    "Plan versions and actual dose remain separate",
+    "UCT and daily AAS save correct results; incomplete UCT rejected",
+    "Corrupt image with a PNG header rejected before saving",
+    "Doctor report contains all entries and saved questions; photos opt in; PDF renders",
+    "JSON round-trip includes photos and remaps all patient identities",
+    "Corrupt cross-patient backup rejected atomically",
+    "Multiple patients stay isolated; toddler gets descriptive diary",
+    "Patient deletion is explicit and isolates other diaries",
+    "Concurrent writes detected without overwriting or losing typed text",
+    "Write failure preserves existing data and unsaved form; no false success",
+    "Installed shell and emergency plan work offline with persisted data",
+    "Mobile and desktop fit; patient picker stays fixed during scrolling",
+    "Update waits for open edits, preserves records and unrelated app cache"
+  ],
+  "browserErrors": []
+}

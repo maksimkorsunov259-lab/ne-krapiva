@@ -1,0 +1,10 @@
+const PREFIX='ne-krapiva:'+new URL(self.registration.scope).pathname+':';
+const CACHE=PREFIX+"a9bc292b650b";
+const FILES=["index.html", "style.css", "manifest.webmanifest", "src/age-policy.js", "src/app.js", "src/config.js", "src/definitions.js", "src/model.js", "src/registry.js", "src/runtime.js", "src/scoring.js", "src/storage.js", "src/ui.js", "src/views.js", "assets/app-qr.png", "assets/author.png", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/icon-original.png", "assets/taplink-qr.png"];
+const URLS=FILES.map(f=>new URL(f,self.registration.scope).href);
+self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(URLS);})()));
+self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting();});
+self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith(PREFIX)&&key!==CACHE)await caches.delete(key);await self.clients.claim();})()));
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const u=new URL(event.request.url);const shell=new URL('index.html',self.registration.scope).href;let target=u.href;
+if(event.request.mode==='navigate'&&(u.href.split('?')[0]===self.registration.scope||u.pathname===new URL(shell).pathname))target=shell;
+if(!URLS.includes(target))return;event.respondWith((async()=>{const cache=await caches.open(CACHE);return await cache.match(target)||fetch(event.request);})());});
