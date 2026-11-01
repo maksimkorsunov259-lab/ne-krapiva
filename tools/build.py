@@ -6,7 +6,10 @@ if not args.url.startswith('https://') or not args.url.endswith('/'):raise Syste
 version=json.loads((ROOT/'package.json').read_text())['version']
 (ROOT/'src/config.js').write_text('export const VERSION='+json.dumps(version)+';\nexport const APP_URL='+json.dumps(args.url)+';\n')
 import qrcode
-qrcode.make(args.url,error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=8,border=4).save(ROOT/'assets/app-qr.png')
+from qrcode.image.pure import PyPNGImage
+# Explicit backend: clean CI machines must not depend on an incidental Pillow install.
+qrcode.make(args.url,error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=8,border=4,
+            image_factory=PyPNGImage).save(str(ROOT/'assets/app-qr.png'))
 files=['index.html','style.css','manifest.webmanifest']+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'src').glob('*.js'))]+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'assets').glob('*.png'))]
 build=hashlib.sha256(b''.join((ROOT/f).read_bytes() for f in files)).hexdigest()[:12]
 sw='''const PREFIX='ne-krapiva:'+new URL(self.registration.scope).pathname+':';
