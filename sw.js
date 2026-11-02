@@ -1,6 +1,6 @@
 const PREFIX='ne-krapiva:'+new URL(self.registration.scope).pathname+':';
-const CACHE=PREFIX+"cdca8812154d";
-const FILES=["index.html", "style.css", "manifest.webmanifest", "src/age-policy.js", "src/app.js", "src/config.js", "src/definitions.js", "src/model.js", "src/registry.js", "src/runtime.js", "src/scoring.js", "src/storage.js", "src/ui.js", "src/views.js", "assets/app-qr.png", "assets/author.png", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/icon-original.png", "assets/taplink-qr.png"];
+const CACHE=PREFIX+"76baeab2cf48";
+const FILES=["index.html", "style.css", "family-header.css", "manifest.webmanifest", "src/age-policy.js", "src/app.js", "src/config.js", "src/definitions.js", "src/model.js", "src/registry.js", "src/runtime.js", "src/scoring.js", "src/storage.js", "src/ui.js", "src/views.js", "assets/app-qr.png", "assets/author.png", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/icon-original.png", "assets/taplink-qr.png"];
 const URLS=FILES.map(f=>new URL(f,self.registration.scope).href);
 self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(URLS);})()));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting();});

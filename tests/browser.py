@@ -23,8 +23,9 @@ try:
   ctx=browser.new_context(accept_downloads=True);page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(BASE);page.evaluate('navigator.serviceWorker.ready');page.reload();page.get_by_role('button',name='Создать профиль пациента').wait_for()
   # Full empty state, profile and a real day.
+  assert page.locator('[data-family-empty]').is_visible()
   create(page,'Тестовый взрослый','1990-01-01');patient_id=snapshot(page)['activePatient']
-  f=page.locator('#day-form');f.locator('[name=q_wheals]').select_option('1');f.locator('[name=q_itch]').select_option('2');f.locator('[name=swelling][value=no]').check();f.locator('[name=comment]').fill('<img src=x onerror=alert(1)> тестовая запись');f.get_by_role('button',name='Сохранить запись',exact=True).click();page.wait_for_timeout(100);page.reload();page.locator('[name=q_wheals]').wait_for();assert page.locator('[name=q_wheals]').input_value()=='1';assert len(snapshot(page)['days'])==1;passed('IndexedDB persists profile and day after reload; no seeded patients')
+  f=page.locator('#day-form');f.locator('[name=q_wheals]').select_option('1');f.locator('[name=q_itch]').select_option('2');f.locator('[name=swelling][value=no]').check();f.locator('[name=comment]').fill('<img src=x onerror=alert(1)> тестовая запись');f.get_by_role('button',name='Сохранить запись',exact=True).click();page.wait_for_timeout(100);page.reload();page.locator('[name=q_wheals]').wait_for();assert page.locator('[name=q_wheals]').input_value()=='1';assert len(snapshot(page)['days'])==1;assert page.locator('[data-family-empty]').is_hidden();passed('IndexedDB persists profile and day after reload; no seeded patients')
   # Save a partial edited day: absent itch must be null.
   page.locator('[name=q_itch]').select_option('');page.get_by_role('button',name='Сохранить изменения',exact=True).click();page.wait_for_timeout(100);s=snapshot(page);assert s['days'][0]['uasRecord']['result']['score'] is None;passed('Partial daily record stays incomplete, not zero')
   # Draft survives emergency overlay and switching sections, then reload.
@@ -70,7 +71,7 @@ try:
   page.set_viewport_size({'width':1440,'height':1000});page.screenshot(path=str(ROOT/'docs/today-desktop.png'),full_page=True);assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');passed('Mobile and desktop fit; patient picker stays fixed during scrolling')
   # Properly isolated manifest identity; update leaves state and unrelated caches intact.
   manifest=page.evaluate("async()=>await(await fetch('./manifest.webmanifest')).json()");assert manifest['id']=='./' and manifest['scope']=='./';page.evaluate("caches.open('em-moloko:test')")
-  cfg=work/'site/src/config.js';cfg.write_text(cfg.read_text().replace('1.0.0','1.0.1'));sw=work/'site/sw.js';sw.write_text(sw.read_text().replace('const CACHE=PREFIX+','const CACHE=PREFIX+"test-update-"+'))
+  cfg=work/'site/src/config.js';cfg.write_text(cfg.read_text().replace(json.loads((ROOT/'package.json').read_text())['version'],'99.0.0'));sw=work/'site/sw.js';sw.write_text(sw.read_text().replace('const CACHE=PREFIX+','const CACHE=PREFIX+"test-update-"+'))
   page.evaluate("async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update()}");page.wait_for_function("!document.getElementById('update').hidden")
   page.locator('[name=comment]').fill('Черновик перед обновлением');page.locator('#update-button').click();page.wait_for_timeout(100);assert page.locator('#update').is_visible();page.get_by_role('button',name='Сохранить изменения',exact=True).click();page.wait_for_timeout(100);
   with page.expect_navigation(wait_until='domcontentloaded'):page.locator('#update-button').click()
