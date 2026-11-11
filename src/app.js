@@ -109,6 +109,6 @@ window.addEventListener('beforeunload',e=>{if([...document.querySelectorAll('for
 channel?.addEventListener('message',async e=>{if(e.data.revision<=state.revision)return;if(hasDirty()||dialog.open){$('#storage-error').hidden=false;$('#storage-error').innerHTML='В другой вкладке изменились записи. '+btn('Перечитать данные','reload-state','','outline');return;}await queue;state=await DB.read();render();});
 async function boot(){try{state=await DB.read();ready=true;$('#storage-error').hidden=true;render();}catch(e){ready=false;render();$('#storage-error').textContent='Не удалось прочитать локальные данные. Они не удалены. '+e.message;$('#storage-error').hidden=false;}}
 
-$('#author').innerHTML=author()+`<div class="settings-link">${btn('О приложении','about','','link')}</div>`;
+$('#author').innerHTML=author()+`<footer class="family-author-footer">${btn('О приложении','about','','link')}<p>© 2026 Коршунов Максим Александрович. Все права защищены.</p><p>Дневник не заменяет назначение и консультацию врача.</p></footer>`;
 setupRuntime({toast,canUpdate:()=>!hasDirty(),flush:saveDrafts});
 await boot();

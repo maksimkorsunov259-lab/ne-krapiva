@@ -10,7 +10,7 @@ from qrcode.image.pure import PyPNGImage
 # Explicit backend: clean CI machines must not depend on an incidental Pillow install.
 qrcode.make(args.url,error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=8,border=4,
             image_factory=PyPNGImage).save(str(ROOT/'assets/app-qr.png'))
-files=['index.html','style.css','family-header.css','manifest.webmanifest']+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'src').glob('*.js'))]+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'assets').glob('*.png'))]
+files=['index.html','style.css','family-header.css','family-author.css','manifest.webmanifest']+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'src').glob('*.js'))]+[p.relative_to(ROOT).as_posix() for p in sorted((ROOT/'assets').glob('*.png'))]
 build=hashlib.sha256(b''.join((ROOT/f).read_bytes() for f in files)).hexdigest()[:12]
 sw='''const PREFIX='ne-krapiva:'+new URL(self.registration.scope).pathname+':';
 const CACHE=PREFIX+BUILD;
